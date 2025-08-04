@@ -8,7 +8,7 @@
 git clone https://github.com/alexanderradko190/bank_api.git
 ``````
 
-2. Перейти в папку docker
+2. Перейти в папку docker, скопировать .env.example и создать .env
 
 ``````
 cd bank-api/docker
