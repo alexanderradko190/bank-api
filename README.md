@@ -5,6 +5,7 @@
 1.Клонировать проект
 
 ``````
+git clone https://github.com/alexanderradko190/bank_api.git
 ``````
 
 2. Перейти в папку docker
