@@ -19,20 +19,24 @@ cd bank-api/docker
 ``````
 docker-compose up -d --build
 ``````
+4. Выполнить
+``````
+docker-compose exec yii2-app php composer install
+``````
 
-4. Выполнить миграции базы данных
+5. Выполнить миграции базы данных
 
 ``````
 docker-compose exec yii2-app php backend/yii migrate
 ``````
 
-5. Сгенерировать тестовые данные через Faker
+6. Сгенерировать тестовые данные через Faker
 
 ``````
 docker-compose exec yii2-app php yii faker/fill
 ``````
 
-6. Проект доступен
+7. Проект доступен
 
 ``````
 http://localhost:8080
