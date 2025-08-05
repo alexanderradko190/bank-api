@@ -21,7 +21,7 @@ docker-compose up -d --build
 ``````
 4. Выполнить
 ``````
-docker-compose exec yii2-app php composer install
+docker-compose exec yii2-app composer install
 ``````
 
 5. Выполнить миграции базы данных
