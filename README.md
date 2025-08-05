@@ -27,7 +27,7 @@ docker-compose exec yii2-app composer install
 5. Выполнить миграции базы данных
 
 ``````
-docker-compose exec yii2-app php backend/yii migrate
+docker-compose exec yii2-app php yii migrate
 ``````
 
 6. Сгенерировать тестовые данные через Faker
