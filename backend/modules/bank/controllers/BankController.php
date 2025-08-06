@@ -2,13 +2,13 @@
 
 namespace backend\modules\bank\controllers;
 
+use backend\modules\bank\readModel\BankReadRepository;
 use Yii;
 use yii\rest\Controller;
 use backend\modules\bank\forms\BankForm;
 use backend\modules\bank\dto\BankDto;
 use backend\modules\bank\services\BankService;
 use backend\modules\bank\repositories\BankRepository;
-use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\web\BadRequestHttpException;
 
@@ -16,38 +16,30 @@ class BankController extends Controller
 {
     private BankService $service;
     private BankRepository $repository;
+    private BankReadRepository $readRepository;
 
-    public function __construct($id, $module, BankService $service, BankRepository $repository, $config = [])
-    {
+    public function __construct(
+        $id,
+        $module,
+        BankService $service,
+        BankRepository $repository,
+        BankReadRepository $readRepository,
+        $config = []
+    ) {
         parent::__construct($id, $module, $config);
         $this->service = $service;
         $this->repository = $repository;
+        $this->readRepository = $readRepository;
     }
 
     public function actionIndex(): array
     {
-        $query = $this->repository->findAllNotDeleted();
-        $country = Yii::$app->request->get('country');
-        $city = Yii::$app->request->get('city');
-        $service = Yii::$app->request->get('service');
-
-        if ($country) {
-            $query->joinWith('country')->andWhere(['country.name' => $country]);
-
-        }
-
-        if ($city) {
-            $query->joinWith('cities')->andWhere(['city.name' => $city]);
-        }
-
-        if ($service) {
-            $query->joinWith('services')->andWhere(['service.name' => $service]);
-
-        }
-
-        $provider = new ActiveDataProvider([
-            'query' => $query->distinct(),
-            'pagination' => ['pageSize' => Yii::$app->request->get('per-page', 10)],
+        $provider = $this->readRepository->getList([
+            'country' => Yii::$app->request->get('country'),
+            'city' => Yii::$app->request->get('city'),
+            'service' => Yii::$app->request->get('service'),
+            'name' => Yii::$app->request->get('name'),
+            'per-page' => Yii::$app->request->get('per-page', 10),
         ]);
 
         return BankDto::many($provider->getModels());
@@ -97,7 +89,7 @@ class BankController extends Controller
     {
 
         $this->service->delete($id);
-        Yii::$app->response->statusCode = 204;
+        Yii::$app->response->statusCode = 200;
 
         return ['message' => 'Банк удален'];
     }

@@ -2,14 +2,13 @@
 
 namespace backend\modules\service\controllers;
 
+use backend\modules\service\readModel\ServiceReadRepository;
 use Yii;
 use yii\rest\Controller;
 use backend\modules\service\forms\ServiceForm;
 use backend\modules\service\dto\ServiceDto;
 use backend\modules\service\services\ServiceService;
 use backend\modules\service\repositories\ServiceRepository;
-use yii\data\ActiveDataProvider;
-use backend\modules\service\models\Service;
 use yii\web\NotFoundHttpException;
 use yii\web\BadRequestHttpException;
 
@@ -17,19 +16,27 @@ class ServiceController extends Controller
 {
     private ServiceService $service;
     private ServiceRepository $repository;
+    private ServiceReadRepository $readRepository;
 
-    public function __construct($id, $module, ServiceService $service, ServiceRepository $repository, $config = [])
-    {
+    public function __construct(
+        $id,
+        $module,
+        ServiceService $service,
+        ServiceRepository $repository,
+        ServiceReadRepository $readRepository,
+        $config = []
+    ) {
         parent::__construct($id, $module, $config);
         $this->service = $service;
         $this->repository = $repository;
+        $this->readRepository = $readRepository;
     }
 
-    public function actionIndex()
+    public function actionIndex(): array
     {
-        $provider = new ActiveDataProvider([
-            'query' => Service::find(),
-            'pagination' => ['pageSize' => Yii::$app->request->get('per-page', 10)],
+        $provider = $this->readRepository->getList([
+            'per-page' => Yii::$app->request->get('per-page', 10),
+            'name' => Yii::$app->request->get('name'),
         ]);
 
         return array_map(fn($c) => new ServiceDto($c), $provider->getModels());
